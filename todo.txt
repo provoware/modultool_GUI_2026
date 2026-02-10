@@ -1,0 +1,12 @@
+FORTSCHRITT: 78%
+NÄCHSTER SCHRITT: Button-Actions vollständig anbinden (Scan/Export/Theme) + Notfall-Overlay (Fail-Safe) sichtbar machen
+[ ] 2026-02-10 | Status | FORTSCHRITT: 74% | prüfen: RELEASE_CHECKLIST.md | fertig wenn: Release-Blocker = 0
+[ ] 2026-02-10 | Next | NÄCHSTER SCHRITT: Button-Aktionen vollständig binden + Notfall-Overlay | prüfen: web/app.js actions | fertig wenn: jeder Button löst Aktion oder Lösung aus
+
+[ ] 2026-02-10 | Prozess | Patch-Plan Pflicht | prüfen: docs/PATCH_WORKFLOW.md | fertig wenn: patch_plan.json pro Änderung existiert
+# todo.txt
+1) Schnellbutton-Leiste (Macro-Keys) wie Referenz: rot/orange Hardware-Tasten, Save rechts.
+2) Footer/Debug-Leiste zweistufig: Tabs + Key-Value-Chips + Status links.
+3) Panel-Raster näher ans Referenzbild (4 Panels + exakte Abstände).
+4) Theme-Umschalter (carmouflage/dunkel/hell/sonnendämmerung) als UI-Option.
+5) Marker-Scan + Registry-Aktualisierung automatisieren im Start.

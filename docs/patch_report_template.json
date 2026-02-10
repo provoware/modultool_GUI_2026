@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "id": "patch_YYYY-MM-DD_###",
+  "result": "unknown",
+  "changed_files": [],
+  "anchors_used": [],
+  "reasons": [],
+  "tests_run": [],
+  "preflight": {
+    "ok": null,
+    "notes": []
+  },
+  "logs_exported": false,
+  "risks_open": [],
+  "next_plan_needed": false
+}

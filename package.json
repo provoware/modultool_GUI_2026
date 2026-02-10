@@ -1,0 +1,11 @@
+{
+  "name": "modultool",
+  "version": "0.7.3",
+  "private": true,
+  "description": "Modultool \u2013 HTML/CSS/JS UI + Node Backend (offline, no deps)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js --root ~/modultool_project --host 127.0.0.1 --port 8787",
+    "test": "node --test"
+  }
+}

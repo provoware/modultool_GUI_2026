@@ -1,0 +1,595 @@
+
+
+    <div class="card" id="projectBrief">
+      <div class="card-h">
+        <div class="card-title">Projektbeschreibung</div>
+        <div class="card-actions">
+          <button class="iconbtn" id="btnBriefToggle" title="Ein-/Ausklappen">▾</button>
+        </div>
+      </div>
+      <div class="card-b" id="briefBody">
+        <div class="brief-grid">
+          <div class="brief-col">
+            <div class="brief-k">Ziel</div>
+            <div class="brief-v">
+              GUI-basiertes Offline-Steuerzentrum für modulare Workflows (Texte, Archiv, Medien, FFmpeg, Tools).
+              Fokus: Robustheit, Laienführung, Barrierefreiheit, keine Telemetrie, keine Cloud.
+            </div>
+
+            <div class="brief-k">Startprinzip</div>
+            <div class="brief-v">
+              Ein Klick: Startskript prüft Umgebung, wählt freien Port, startet Server, öffnet Browser.
+              Fehler werden nicht „geworfen“, sondern als Hinweise mit Lösungsknöpfen gezeigt (Safe Mode + Self-Repair).
+            </div>
+
+            <div class="brief-k">Datenmodell</div>
+            <div class="brief-v">
+              Projektordner als Single-Source-of-Truth. JSON-Dateien + Logs in klaren Unterordnern.
+              Keine Überschreibung: sichere Dateinamen, Status-Suffixe, nachvollziehbare Historie.
+            </div>
+          </div>
+
+          <div class="brief-col">
+            <div class="brief-k">Sicherheit & Stabilität</div>
+            <div class="brief-v">
+              Preflight prüft Struktur/Dateien/Schreibrechte. Self-Repair erstellt fehlende Ordner/Settings.
+              Exit ist „nie Sackgasse“: Dropdown mit Speichern/Schließen/Safe/Self-Repair.
+            </div>
+
+            <div class="brief-k">Barrierefreiheit</div>
+            <div class="brief-v">
+              Hoher Kontrast, Invertieren, Große Schrift, Weniger Bewegung, Tooltips.
+              Bedienung per großen Buttons, klare Texte, keine versteckten Pflichtschritte.
+            </div>
+
+            <div class="brief-k">Build-Infos</div>
+            <div class="brief-v mono">
+              <span id="mfName">Modultool</span> • v<span id="mfVersion">0.0.0</span> • Build <span id="mfBuild">—</span><br>
+              Host/Port: <span id="mfHost">—</span> : <span id="mfPort">—</span> • Root: <span id="mfRoot">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="brief-foot">
+          <span class="pill">Release-ready UI-Story</span>
+          <span class="pill">Offline</span>
+          <span class="pill">JSON-First</span>
+          <span class="pill">Self-Repair</span>
+          <span class="pill">Laien-Modus</span>
+        </div>
+      </div>
+    </div>
+
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Modultool – Hauptmodul</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="topbar" role="banner" aria-label="Kopfzeile">
+    <div class="top-glow" aria-hidden="true"></div>
+
+    <div class="brand">
+      <div class="logo" aria-hidden="true">🧠</div>
+      <div class="brandtext">
+        <div class="title">PROWARE TOOL</div>
+        <div class="subtitle">Modultool · Hauptmodul</div>
+      </div>
+    </div>
+
+    <div class="top-icons" role="toolbar" aria-label="Kopf-Icons">
+      <button class="mini-btn" id="icMail" title="Mail" aria-label="Mail">✉</button>
+      <button class="mini-btn" id="icUser" title="User" aria-label="User">👤</button>
+      <button class="mini-btn" id="icSearch" title="Suche" aria-label="Suche">⌕</button>
+      <button class="mini-btn" id="icCfg" title="Config" aria-label="Config">⚙</button>
+    </div>
+
+    <div class="top-actions" role="toolbar" aria-label="Schnellaktionen">
+      <button class="btn btn-ghost" id="btnHelp" title="Hilfe">Hilfe</button>
+      <button class="btn btn-ghost" id="btnDetails" title="Details">Details</button>
+      <button class="btn" id="btnExit" title="Schließt den Server sauber" id="btnBeenden">Beenden</button>
+        <select id="themeSelect" class="select select-sm" title="Theme">
+          <option value="carmouflage">carmouflage</option>
+          <option value="dunkel">dunkel</option>
+          <option value="hell">hell</option>
+          <option value="sonnendaemmerung">sonnendämmerung</option>
+        </select>
+        <button class="btn btn-ghost" id="btnA11y" title="Barriere-Optionen">A11y</button>
+    </div>
+  </header>
+        <div class="banner" id="portBanner" style="display:none" role="status" aria-live="polite">
+          <div class="banner-left">
+            <div class="banner-title">Server läuft</div>
+            <div class="banner-sub" id="portBannerText">—</div>
+        <div class="banner" id="autoOpenBanner" role="region" aria-label="Startoptionen">
+          <div class="banner-left">
+            <div class="banner-title">Startoption</div>
+            <div class="banner-sub">Browser automatisch öffnen</div>
+          </div>
+          <div class="banner-right">
+            <select id="autoOpenSelect" aria-label="Browser automatisch öffnen">
+              <option value="on">an</option>
+              <option value="off">aus</option>
+            </select>
+          </div>
+        </div>
+
+          </div>
+          <div class="banner-right">
+            <button class="btn btn-ghost" id="btnOpenUrl" title="In neuem Tab öffnen">↗ Öffnen</button>
+            <button class="btn btn-ghost" id="btnCopyUrl" title="URL kopieren">📋 Kopieren</button>
+            <button class="btn btn-ghost" id="btnHideBanner" title="Ausblenden">✖</button>
+          </div>
+        </div>
+
+
+  <div class="shell">
+    <aside class="sidebar" role="navigation" aria-label="Navigation">
+      <div class="navgroup">
+        <button class="navitem navitem-active" data-tab="dashboard"><span class="navico">⌂</span><span class="navtxt">Dashboard</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="settings"><span class="navico">⚙</span><span class="navtxt">Settings</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="plugins"><span class="navico">☰</span><span class="navtxt">Plugins</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="updates"><span class="navico">⟳</span><span class="navtxt">Updates</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="files"><span class="navico">▣</span><span class="navtxt">Files</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="logs"><span class="navico">≡</span><span class="navtxt">Logs</span><span class="navarr">›</span></button>
+      </div>
+
+      <div class="navgroup">
+        <div class="navtitle">Plugin Bar</div>
+        <button class="navitem" data-tab="analytics"><span class="navico">▦</span><span class="navtxt">Analytics</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="explorer"><span class="navico">🗂</span><span class="navtxt">File Explorer</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="notes"><span class="navico">✎</span><span class="navtxt">Notizen</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="scheduler"><span class="navico">⏱</span><span class="navtxt">Scheduler</span><span class="navarr">›</span></button>
+        <button class="navitem" data-tab="ffmpeg"><span class="navico">▶</span><span class="navtxt">FFmpeg</span><span class="navarr">›</span></button>
+      </div>
+    </aside>
+
+    <main class="main" role="main" aria-label="Arbeitsbereich">
+      <div class="mainwrap"><div class="panelgrid" id="panelgrid"><section class="panel">
+        <div class="pages">
+          <div class="page page-active" data-page="dashboard">
+        <div class="panel-head">
+          <div class="panel-titlebar">
+            <div class="grip" aria-hidden="true" title="Griffleiste"><i></i></div>
+            <div class="panel-title">Kern bereit machen</div>
+            <div class="panel-tools" role="toolbar" aria-label="Panel Werkzeuge">
+              <button class="mini-btn" title="Pin" aria-label="Pin">📌</button>
+              <button class="mini-btn" title="Ordner" aria-label="Ordner">📁</button>
+              <button class="mini-btn" title="Suche" aria-label="Suche">⌕</button>
+              <button class="mini-btn" title="Infos" aria-label="Infos">ℹ</button>
+              <button class="mini-btn" title="Minimieren" aria-label="Minimieren">▁</button>
+              <button class="mini-btn" title="Maximieren" aria-label="Maximieren">▢</button>
+            </div>
+          </div>
+          <div class="panel-meta" id="metaLine">READY · Bereit</div>
+        </div>
+
+        <div class="panel-body">
+          <div class="row">
+            <button class="btn btn-primary" id="btnPreflight">Preflight (CHECK)</button>
+            <button class="btn btn-warn" id="btnAutoFix" title="AutoFix: Repariert Struktur + Linux-konforme Dateinamen (Umbenennen/Verschieben)">AutoFix</button>
+            <button class="btn" id="btnTestHint">Test-Hinweis</button>
+            <button class="btn" id="btnClearHints">Hinweise leeren</button>
+        <button class="btn btn-ghost" id="btnScan" title="Scan: TODO/FIXME/Platzhalter suchen">Scan</button>
+            <span class="spacer"></span>
+            <div class="chip" id="chipRoot" title="Projektordner">Root: —</div>
+
+    <div class="panel-grid" id="panelGrid">
+      <div class="panel" data-panel="system">
+        <div class="panel-h"><span><span id="systemOverviewTitle">System Overview</span></span><span class="grip">⋮⋮</span></div>
+        <div class="panel-b" id="panelSystemSlot">
+          <div class="bigbox" id="preflightResult">
+            <div class="bigbox-h">Preflight Ergebnis</div>
+            <div class="bigbox-b" id="preflightResultBody">Noch keine Prüfung gestartet.</div>
+            <div class="bigbox-a" id="preflightActions" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" data-panel="hints">
+        <div class="panel-h"><span>Hinweisbox</span><span class="grip">⋮⋮</span></div>
+        <div class="panel-b" id="panelHintsSlot"></div>
+      </div>
+      <div class="panel" data-panel="eventlog">
+        <div class="panel-h"><span>Eventlog (Klicks + Aktionen)</span><span class="grip">⋮⋮</span></div>
+        <div class="panel-b" id="panelEventlogSlot"></div>
+      </div>
+      <div class="panel" data-panel="about">
+        <div class="panel-h"><span>Projektbeschreibung</span><span class="grip">⋮⋮</span></div>
+        <div class="panel-b" id="panelBriefSlot"></div>
+      </div>
+    </div>
+
+
+          </div>
+
+          <div class="grid">
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">System Overview</div>
+                <div class="card-tools" role="toolbar" aria-label="Card Werkzeuge">
+                  <button class="mini-btn" title="Ansicht" aria-label="Ansicht">▦</button>
+                  <button class="mini-btn" title="Export" aria-label="Export">⤓</button>
+                  <button class="mini-btn" title="Refresh" aria-label="Refresh">⟳</button>
+                  <button class="mini-btn" title="Pin" aria-label="Pin">📌</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="mini-stats">
+                  <div class="stat"><span class="k">Session</span><span class="v" id="statSession">—</span></div>
+                  <div class="stat"><span class="k">CPU-Modus</span><span class="v" id="statCPU">Schonend</span></div>
+                  <div class="stat"><span class="k">RAM-Wächter</span><span class="v" id="statRAM">aktiv</span></div>
+                  <div class="stat"><span class="k">Laufzeit</span><span class="v" id="statUp">0s</span></div>
+                </div>
+                <div class="note">Erst Kern stabil: Preflight, Hints, Settings, Eventlog. Danach Module.</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Hinweisbox</div>
+                <div class="card-tools" role="toolbar" aria-label="Card Werkzeuge">
+                  <button class="mini-btn" title="Filter" aria-label="Filter">⎇</button>
+                  <button class="mini-btn" title="Pin" aria-label="Pin">📌</button>
+                  <button class="mini-btn" title="List" aria-label="List">≡</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="hint" id="hintText">Noch keine Hinweise.</div>
+                <div class="hintmeta" id="hintMeta">—</div>
+                <div class="row" style="margin-top:10px;">
+                  <button class="btn btn-ghost" id="btnHintDetails">Details</button>
+                  <button class="btn btn-danger" id="btnHintDismiss">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-wide">
+              <div class="card-head">
+                <div class="card-title">Eventlog (Klicks + Aktionen)</div>
+                <div class="card-tools" role="toolbar" aria-label="Card Werkzeuge">
+                  <button class="mini-btn" title="Copy" aria-label="Copy">⧉</button>
+                  <button class="mini-btn" title="Clear" aria-label="Clear">⌫</button>
+                  <button class="mini-btn" title="Pin" aria-label="Pin">📌</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <pre class="log" id="eventLog" aria-label="Eventlog">—</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="macrokeys macrokeys-hw" role="toolbar" aria-label="Schnellleiste">
+        <div class="macrogrid" aria-label="Schnelltasten">
+          <button class="mkey" data-key="1" aria-label="Schnelltaste 1" title="Schnelltaste 1">1</button>
+          <button class="mkey" data-key="2" aria-label="Schnelltaste 2" title="Schnelltaste 2">2</button>
+          <button class="mkey" data-key="3" aria-label="Schnelltaste 3" title="Schnelltaste 3">3</button>
+          <button class="mkey" data-key="4" aria-label="Schnelltaste 4" title="Schnelltaste 4">4</button>
+          <button class="mkey" data-key="5" aria-label="Schnelltaste 5" title="Schnelltaste 5">5</button>
+          <button class="mkey" data-key="6" aria-label="Schnelltaste 6" title="Schnelltaste 6">6</button>
+          <button class="mkey" data-key="7" aria-label="Schnelltaste 7" title="Schnelltaste 7">7</button>
+          <button class="mkey" data-key="8" aria-label="Schnelltaste 8" title="Schnelltaste 8">8</button>
+          <button class="mkey" data-key="9" aria-label="Schnelltaste 9" title="Schnelltaste 9">9</button>
+          <button class="mkey" data-key="0" aria-label="Schnelltaste 0" title="Schnelltaste 0">0</button>
+        </div>
+        <div class="macrogrid macrogrid2" aria-label="Schnelltasten 2">
+          <button class="mkey" data-key="1" aria-label="Schnelltaste 1" title="Schnelltaste 1">1</button>
+          <button class="mkey" data-key="2" aria-label="Schnelltaste 2" title="Schnelltaste 2">2</button>
+          <button class="mkey" data-key="3" aria-label="Schnelltaste 3" title="Schnelltaste 3">3</button>
+          <button class="mkey" data-key="4" aria-label="Schnelltaste 4" title="Schnelltaste 4">4</button>
+          <button class="mkey" data-key="5" aria-label="Schnelltaste 5" title="Schnelltaste 5">5</button>
+          <button class="mkey" data-key="6" aria-label="Schnelltaste 6" title="Schnelltaste 6">6</button>
+          <button class="mkey" data-key="7" aria-label="Schnelltaste 7" title="Schnelltaste 7">7</button>
+          <button class="mkey" data-key="8" aria-label="Schnelltaste 8" title="Schnelltaste 8">8</button>
+        </div>
+        <button class="mkey mkey-save" id="btnSaveQuick" title="Speichern" aria-label="Speichern">Save</button>
+      </div>
+
+      <footer class="footer" role="contentinfo">
+        <div class="consolebar">
+          <div class="ctabs" role="tablist" aria-label="Konsole">
+            <button class="ctab ctab-active" role="tab" aria-selected="true" data-ctab="console">Console</button>
+            <button class="ctab" role="tab" aria-selected="false" data-ctab="debug">Debug info</button>
+            <button class="ctab" role="tab" aria-selected="false" data-ctab="log">Log</button>
+            <button class="ctab" role="tab" aria-selected="false" data-ctab="errors">Errors</button>
+          </div>
+          <div class="cchips" aria-label="Key-Value Chips">
+            <div class="chipkv"><span class="k">FTP-PORT</span><span class="v" id="kvFtpPort">21</span></div>
+            <div class="chipkv"><span class="k">DB-NAME</span><span class="v" id="kvDb">provoware.db</span></div>
+            <div class="chipkv"><span class="k">ROOT</span><span class="v" id="kvRoot">—</span></div>
+            <div class="chipkv"><span class="k">CPU</span><span class="v" id="kvCpu">Schonend</span></div>
+            <div class="chipkv"><span class="k">RAM</span><span class="v" id="kvRam">aktiv</span></div>
+            <div class="chipkv"><span class="k">UP</span><span class="v" id="kvUp">0s</span></div>
+          </div>
+        </div>
+
+        <div class="status">
+          <span class="led" id="statusLed" aria-hidden="true"></span>
+          <span id="statusText">Status: Bereit</span>
+        </div>
+
+        <div class="toggles" aria-label="Barriere-Optionen">
+          <label class="toggle"><input type="checkbox" id="tHigh"/> Hoher Kontrast</label>
+          <label class="toggle"><input type="checkbox" id="tInv"/> Invertieren</label>
+          <label class="toggle"><input type="checkbox" id="tBig"/> Große Schrift</label>
+          <label class="toggle"><input type="checkbox" id="tMotion"/> Weniger Bewegung</label>
+          <label class="toggle"><input type="checkbox" id="tTips" checked/> Tooltips</label>
+        </div>
+      </footer>
+    
+          <div class="page" data-page="export">
+            <div class="subpanel">
+              <div class="subhead">Export-Zentrum</div>
+              <div class="subbody">
+                <div class="note">Erstellt ZIP-Backups (Settings, Logs, Notizen) im Projektordner: <b>exports/</b>. Download direkt im Browser.</div>
+                <div class="row">
+                  <button class="btn btn-primary" id="btnExportCreate">Export erstellen</button>
+                  <button class="btn" id="btnExportRefresh">Liste aktualisieren</button>
+                </div>
+                <div class="exports">
+                  <div class="exports-head">
+                    <div>Name</div><div>Größe</div><div>Datum</div><div>Aktion</div>
+                  </div>
+                  <div class="exports-body" id="exportsList">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="page" data-page="batch">
+            <div class="subpanel">
+              <div class="subhead">Batch / Nachtmodus</div>
+              <div class="subbody">
+                <div class="note">
+                  Default: <b>Retry 1×</b>, danach <b>Skip</b>. Kritische Jobs stoppen den Lauf. Am Ende entsteht automatisch ein <b>Report-ZIP</b> in <b>exports/</b>.
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" id="btnJobAddOk">Job hinzufügen (OK)</button>
+                  <button class="btn" id="btnJobAddFail">Job hinzufügen (Fail)</button>
+                  <button class="btn" id="btnJobReset">Liste leeren</button>
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" id="btnJobRun">Start</button>
+                  <button class="btn" id="btnJobRefresh">Aktualisieren</button>
+                  <span class="tag" id="jobStatusTag">—</span>
+                </div>
+
+                <div class="exports" style="margin-top:14px">
+                  <div class="exports-head">
+                    <div>Job</div><div>Status</div><div>Versuche</div><div>Info</div>
+                  </div>
+                  <div class="exports-body" id="jobList">—</div>
+                </div>
+
+                <div class="note" style="margin-top:12px">
+                  Morgens: im Ordner <b>exports/</b> liegt ein ZIP mit <b>job_report.json</b> + Logs.
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+<div class="card" id="snippetModule" data-focus="snippets">
+  <div class="card-title">Textbausteine (Schnelltasten)</div>
+  <div class="card-sub">Baustein anlegen, Taste zuweisen, Klick auf Schnelltaste kopiert in Zwischenablage (und wird geloggt).</div>
+  <div class="snip-grid">
+    <div class="snip-form">
+      <label class="lbl">Titel</label>
+      <input class="inp" id="snipTitle" placeholder="z.B. YouTube Beschreibung" maxlength="120">
+      <label class="lbl">Text</label>
+      <textarea class="ta" id="snipText" placeholder="Textbaustein..." maxlength="20000"></textarea>
+      <div class="row">
+        <label class="lbl2">Schnelltaste</label>
+        <select class="select select-sm" id="snipKey">
+          <option value="">keine</option>
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+          <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+        <div style="flex:1"></div>
+        <button class="btn" id="snipSave" data-tip="Speichert/aktualisiert den Baustein">Speichern</button>
+        <button class="btn btn-ghost" id="snipClear" data-tip="Formular leeren">Leeren</button>
+      </div>
+      <div class="small" id="snipOut"></div>
+    </div>
+    <div class="snip-list">
+      <div class="list-head">
+        <div>Liste</div>
+        <button class="btn btn-ghost" id="snipReload" data-tip="Neu laden">Neu laden</button>
+      </div>
+      <div class="list" id="snipList"></div>
+      <div class="small">Klick auf Eintrag lädt in den Editor. Taste kopiert Text sofort.</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card" id="snipHistory">
+  <div class="card-title">Snippet-Verlauf (alte Inhalte)</div>
+  <div class="card-sub">Wenn ein Baustein überschrieben wird, wird der alte Text hier gespeichert und bleibt kopierbar.</div>
+  <div class="row">
+    <button class="btn btn-ghost" id="histReload">Verlauf laden</button>
+    <div style="flex:1"></div>
+    <span class="chip" id="histCount">0 Einträge</span>
+  </div>
+  <div class="list" id="histList" style="margin-top:10px; max-height:280px"></div>
+</div>
+
+</div>
+</div>
+</main>
+  </div>
+
+  <dialog class="dlg" id="dlg">
+    <div class="dlg-head">
+      <div class="dlg-title" id="dlgTitle">Info</div>
+      <button class="btn btn-danger" id="dlgClose">✕</button>
+    </div>
+    <div class="dlg-body" id="dlgBody"></div>
+  </dialog>
+
+  <div class="wizard-overlay" id="wizardOverlay" style="display:none" aria-modal="true" role="dialog" aria-label="Erststart-Assistent">
+    <div class="wizard-card">
+      <div class="wizard-head">
+        <div class="wizard-title">Erststart-Assistent</div>
+        <div class="wizard-sub">3 Schritte, dann läuft alles. Kein Terminal nötig.</div>
+      </div>
+
+      <div class="wizard-step" id="wizStep1">
+        <div class="wiz-h">1) Projektordner wählen</div>
+        <div class="wiz-t">Das ist der Speicherort für Logs, Exporte, Queue, Daten. Tipp: <span class="mono">~/Projekte/modultool_project</span></div>
+
+        <div class="wiz-row">
+          <input class="wiz-input" id="wizProjectRoot" placeholder="/home/DEINNAME/Projekte/modultool_project" autocomplete="off"/>
+          <button class="btn" id="btnWizUseDefault" title="Vorschlag eintragen">Vorschlag</button>
+        </div>
+
+        <div class="wiz-row">
+          <select id="wizPreset" class="wiz-select" aria-label="Schnellwahl">
+            <option value="">Schnellwahl…</option>
+            <option value="~/Projekte/modultool_project">~/Projekte/modultool_project</option>
+            <option value="~/Dokumente/modultool_project">~/Dokumente/modultool_project</option>
+            <option value="~/Desktop/modultool_project">~/Desktop/modultool_project</option>
+          </select>
+          <button class="btn" id="btnWizApplyPreset">Übernehmen</button>
+        </div>
+
+        <div class="wiz-row">
+          <button class="btn" id="btnWizTestPath">Ordner testen</button>
+          <div class="wiz-note" id="wizTestOut" style="display:none; background: rgba(0,255,90,.08);"></div>
+        </div>
+
+        <div class="wiz-row" id="wizSolutions" style="display:none">
+          <button class="btn" id="btnWizUseProjects">Pfad auf ~/Projekte setzen</button>
+          <button class="btn btn-ghost" id="btnWizMakeNew">Neuen Ordner anlegen</button>
+        </div>
+
+        <div class="wiz-note" id="wizErr1" style="display:none"></div>
+      </div>
+
+      <div class="wizard-step" id="wizStep2" style="display:none">
+        <div class="wiz-h">2) Browser automatisch öffnen?</div>
+        <div class="wiz-t">Wenn an, öffnet <span class="mono">start.sh</span> nach dem Start automatisch die richtige URL.</div>
+        <div class="wiz-row">
+          <select id="wizAutoOpen" class="wiz-select" aria-label="Browser automatisch öffnen">
+            <option value="on">an</option>
+            <option value="off">aus</option>
+          </select>
+          <button class="btn" id="btnWizBack1">Zurück</button>
+        </div>
+      </div>
+
+      <div class="wizard-step" id="wizStep3" style="display:none">
+        <div class="wiz-h">3) Fertig</div>
+        <div class="wiz-t">Speichert alles, legt Ordner an, startet sauber. Du kannst danach jederzeit über Logout sicher schließen.</div>
+        <div class="wiz-row">
+          <button class="btn" id="btnWizFinish" disabled>Fertig starten</button>
+          <div class="wizard-sub" id="wizFinishHint">Aktiviert sich nach „Ordner testen“ = OK.</div>
+          <button class="btn btn-ghost" id="btnWizSkip">Später</button>
+        </div>
+        <div class="wiz-note" id="wizOut" style="display:none"></div>
+      </div>
+
+      <div class="wizard-foot">
+        <div class="mono" id="wizHint">Tipp: Wenn du unsicher bist, nimm den Vorschlag.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Exit Modal (v0.5.7) -->
+  <div class="modal" id="exitModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-title">Beenden</div>
+      <div class="modal-text">Wähle eine sichere Option. Nichts stürzt ab, du bekommst immer einen Weg raus.</div>
+      <div class="modal-row">
+        <select id="exitMode" class="select">
+          <option value="save_exit">Speichern + schließen</option>
+          <option value="exit">Nur schließen</option>
+          <option value="safe">Safe Mode öffnen</option>
+          <option value="selfrepair">Self-Repair starten</option>
+        </select>
+        <button class="btn" id="btnExitGo">Ausführen</button>
+        <button class="btn btn-ghost" id="btnExitCancel">Abbrechen</button>
+      </div>
+      <div class="modal-small" id="exitOut"></div>
+    </div>
+  </div>
+
+
+  <!-- A11y Modal (v0.5.9) -->
+  <div class="modal" id="a11yModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-title">Barriere-Optionen</div>
+      <div class="modal-text">Schalter wirken sofort und werden gespeichert.</div>
+      <div class="a11y-grid">
+        <label class="chk"><input type="checkbox" id="a11yContrast"> <span>Hoher Kontrast</span></label>
+        <label class="chk"><input type="checkbox" id="a11yInvert"> <span>Invertieren</span></label>
+        <label class="chk"><input type="checkbox" id="a11yBig"> <span>Große Schrift</span></label>
+        <label class="chk"><input type="checkbox" id="a11yMotion"> <span>Weniger Bewegung</span></label>
+        <label class="chk"><input type="checkbox" id="a11yTips"> <span>Tooltips</span></label>
+      </div>
+      <div class="modal-row">
+        <button class="btn" id="btnA11ySave">Speichern</button>
+        <button class="btn btn-ghost" id="btnA11yClose">Schließen</button>
+      </div>
+      <div class="modal-small" id="a11yOut"></div>
+    </div>
+  </div>
+
+
+  <!-- Fail-Safe Overlay (v0.5.9) -->
+  <div class="overlay" id="failsafeOverlay" style="display:none">
+    <div class="overlay-card">
+      <div class="overlay-title">Notfall-Overlay</div>
+      <div class="overlay-text" id="failsafeText">Ein Problem wurde erkannt. Du bekommst sofort Lösungen.</div>
+      <div class="overlay-actions">
+        <button class="btn" id="fsRetry">Nochmal versuchen</button>
+        <button class="btn" id="fsPreflight">Preflight</button>
+        <button class="btn" id="fsSelfRepair">Self-Repair</button>
+        <button class="btn btn-ghost" id="fsSafe">Safe Mode</button>
+        <button class="btn btn-ghost" id="fsExport">Log export</button>
+        <button class="btn btn-ghost" id="fsClose">Schließen</button>
+      </div>
+      <div class="overlay-small" id="failsafeDiag"></div>
+    </div>
+  </div>
+
+
+    <div class="footer" id="footer">
+      <div class="footer-tabs" role="tablist" aria-label="Debug Tabs">
+        <button class="tab active" data-tab="console">Console</button>
+        <button class="tab" data-tab="debuginfo">Debug Info</button>
+        <button class="tab" data-tab="log">Log</button>
+        <button class="tab" data-tab="errors">Errors</button>
+      </div>
+      <div class="footer-row">
+        <div class="sysstate ready" id="sysState">READY</div>
+        <div class="chips" id="kvChips"></div>
+        <div style="flex:1"></div>
+        <button class="btn btn-ghost" id="btnFooterExport" title="Log export">Export</button>
+      </div>
+    </div>
+
+<div id="tooltip" class="tooltip" style="display:none"></div>
+
+<div class="overlay" id="clipOverlay" style="display:none">
+  <div class="overlay-card">
+    <div class="overlay-title">Zwischenablage (Fallback)</div>
+    <div class="overlay-sub">Dein Browser hat das automatische Kopieren blockiert. Hier kannst du den Text sicher kopieren.</div>
+    <textarea class="ta" id="clipText" style="min-height:180px"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" id="clipTry">Kopieren versuchen</button>
+      <button class="btn btn-ghost" id="clipClose">Schließen</button>
+    </div>
+    <div class="small" id="clipOut"></div>
+  </div>
+</div>
+
+  <script src="app.js?v=20260210084426" defer></script>
+</body>
+</html>

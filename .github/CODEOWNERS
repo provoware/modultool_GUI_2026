@@ -1,0 +1,6 @@
+# Beispiel: passe Owner an
+/server.js          @you
+/web/               @you
+/tools/             @you
+/tests/             @you
+/docs/              @you

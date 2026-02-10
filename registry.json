@@ -1,0 +1,12 @@
+{
+  "markers_found": [],
+  "last_scan": "2026-02-04 23:18:09",
+  "notes": "v0.2.2: keine Marker-Scan-Ausführung im Build-Container",
+  "dev_process": {
+    "patch_plan_required": true,
+    "last_docs_update": "2026-02-10 06:36:34",
+    "patch_report_required": true,
+    "recommendations_file": "RECOMMENDATIONS.md",
+    "last_process_update": "2026-02-10 07:03:22"
+  }
+}

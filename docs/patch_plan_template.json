@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "patch_YYYY-MM-DD_###",
+  "title": "Kurz und eindeutig",
+  "intent": "Warum wird gepatcht? (1-2 Sätze)",
+  "scope": {
+    "files": [],
+    "anchors": [],
+    "forbidden": [
+      "web/vendor/*",
+      "node_modules/*",
+      ".git/*"
+    ]
+  },
+  "rules": [
+    "Nur Dateien in scope.files ändern",
+    "Nur an scope.anchors patchen, sonst abbrechen und Plan erweitern",
+    "Niemals funktionierende Pfade entfernen: nur additive Änderungen",
+    "Tests vorher und nachher ausführen, Ergebnisse in patch_report.json speichern"
+  ],
+  "steps": [],
+  "tests_required": [
+    "npm test"
+  ],
+  "info_files_to_update": [
+    "CHANGELOG.md",
+    "ENTWICKLUNGS_STATUS.md",
+    "todo.txt",
+    "docs/PROJECT_TREE.txt",
+    "registry.json",
+    "manifest.json",
+    "RELEASE_CHECKLIST.md",
+    "STANDARDS_VORGABEN.md"
+  ],
+  "done_when": [
+    "Tests grün",
+    "Keine UI-Regressionen (Buttons reagieren / Logs sichtbar)",
+    "Info-Dateien aktualisiert"
+  ]
+}

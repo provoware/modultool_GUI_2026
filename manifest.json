@@ -1,0 +1,47 @@
+{
+  "name": "modultool",
+  "channel": "node_html",
+  "version": "0.7.3",
+  "build_date": "2026-02-10 08:44:26",
+  "standards": {
+    "language_ui": "de",
+    "no_telemetry": true,
+    "offline_capable": true,
+    "no_cloud": true,
+    "design": "macrokeys_console_tabs_sidebar_slots_panel_toolbars_double_outline",
+    "accessibility": [
+      "keyboard_focus",
+      "keyboard_shortcuts",
+      "high_contrast_toggle",
+      "big_text_toggle",
+      "reduced_motion_toggle"
+    ]
+  },
+  "defaults": {
+    "auto_open_browser": true
+  },
+  "brand": "Provoware",
+  "ui": "Provoware Tool Look",
+  "offline": true,
+  "themes": [
+    "carmouflage",
+    "dunkel",
+    "hell",
+    "sonnendaemmerung"
+  ],
+  "accessibility": [
+    "high_contrast",
+    "invert",
+    "big_text",
+    "reduced_motion",
+    "tooltips"
+  ],
+  "modules": [
+    "textbausteine"
+  ],
+  "dev_process": {
+    "patch_plan_required": true,
+    "single_source_of_truth": "project_root from settings.json (wizard sets it)",
+    "patch_plan_mode": "codex_guardrails"
+  }
+}
